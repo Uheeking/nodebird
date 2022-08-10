@@ -1,0 +1,22 @@
+{
+  "name": "react-nodebird-front",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Uheeking/nodebird.git"
+  },
+  "author": "uheeking",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Uheeking/nodebird/issues"
+  },
+  "homepage": "https://github.com/Uheeking/nodebird#readme",
+  "dependencies": {
+    "next": "^9.5.5"
+  }
+}
