@@ -1,10 +1,15 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
 import { Menu, Input, Row, Col } from "antd";
+import styled from "styled-components";
 
-import LoginForm from '../components/LoginForm'
-import UserProfile from '../components/UserProfile'
+import LoginForm from "../components/LoginForm";
+import UserProfile from "../components/UserProfile";
+
+const SearchInput = styled(Input.Search)`
+  vertical-align: middle;
+`;
 
 const AppLayout = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -40,7 +45,7 @@ const AppLayout = ({ children }) => {
         {/* 모바일 xs, 태블릿 sm, 작은 데스크탑 md */}
         {/* n/24 ex) 24이면 크기 다 차지*/}
         <Col xs={24} md={6}>
-          {isLoggedIn ? <UserProfile /> : <LoginForm />}
+          {isLoggedIn ? <UserProfile  setIsLoggedIn={setIsLoggedIn} /> : <LoginForm setIsLoggedIn={setIsLoggedIn}/>}
         </Col>
         <Col xs={24} md={12}>
           {children}
