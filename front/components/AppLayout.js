@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
 import { Menu, Input, Row, Col } from "antd";
 import styled from "styled-components";
+import {useSelector} from 'react-redux'
 
 import LoginForm from "../components/LoginForm";
 import UserProfile from "../components/UserProfile";
@@ -12,7 +13,8 @@ const SearchInput = styled(Input.Search)`
 `;
 
 const AppLayout = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const isLoggedIn = useSelector((state)=> state.user.isLoggedIn)
+  // const [isLoggedIn, setIsLoggedIn] = useState(false);
   // proptypes node에 있는거
   return (
     // <div>
@@ -45,7 +47,7 @@ const AppLayout = ({ children }) => {
         {/* 모바일 xs, 태블릿 sm, 작은 데스크탑 md */}
         {/* n/24 ex) 24이면 크기 다 차지*/}
         <Col xs={24} md={6}>
-          {isLoggedIn ? <UserProfile  setIsLoggedIn={setIsLoggedIn} /> : <LoginForm setIsLoggedIn={setIsLoggedIn}/>}
+          {isLoggedIn ? <UserProfile /> : <LoginForm />}
         </Col>
         <Col xs={24} md={12}>
           {children}
