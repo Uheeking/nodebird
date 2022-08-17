@@ -5,8 +5,8 @@ import Prototypes from "prop-types";
 import styled from "styled-components";
 
 import useInput from "../hooks/useInput";
-import { loginAction } from "../reducers/user";
-import { useDispatch } from "react-redux";
+import { loginRequestAction } from "../reducers/user";
+import { useDispatch, useSelector } from "react-redux";
 
 const ButtonWrapper = styled.div`
   margin-top: 10px;
@@ -17,12 +17,13 @@ const FormWrapper = styled(Form)`
 
 const LoginForm = () => {
   const dispatch = useDispatch();
+  const { isLoggingIn } = useSelector((state) => state.user);
   const [id, onChangeId] = useInput("");
   const [password, onChangePassword] = useInput("");
 
   const onSubmitForm = useCallback(() => {
     console.log(id, password);
-    dispatch(loginAction({ id, password }));
+    dispatch(loginRequestAction({ id, password }));
     // setIsLoggedIn(true)
   }, [id, password]);
   // const style = useMemo(()=> ({marginTop:10}),[])
@@ -46,7 +47,7 @@ const LoginForm = () => {
       </div>
       <div>
         <ButtonWrapper>
-          <Button type="primary" htmlType="submit" loading={false}>
+          <Button type="primary" htmlType="submit" loading={isLoggingIn}>
             로그인
           </Button>
           <Link href="/signup">

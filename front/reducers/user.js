@@ -4,27 +4,31 @@ export const initialState = {
   signUpData: {},
   loginData: {},
 };
-export const loginAction = (data) => {
-  return {
-    type: "LOG_IN",
-    data,
-  };
-};
-export const logoutAction = (data) => {
-  return {
-    type: "LOG_OUT",
-    data,
-  };
-};
+
+export const loginRequestAction = (data) => ({
+  type: LOG_IN_REQUEST,
+  data,
+});
+
+export const logoutRequestAction = () => ({
+  type: LOG_OUT_REQUEST,
+});
+
 const reducer = (state = initialState, action) => {
   switch (action.type) {
-    case "LOG_IN":
+    case "LOG_IN_REQUEST":
       return {
         ...state,
-        isLoggedIn: true,
-        me: action.user,
+        isLoggingIn: true,
       };
-    case "LOG_OUT":
+      case "LOG_IN_SUCCESS":
+      return {
+        ...state,
+        isLoggingIn:false,
+        isLoggedIn: true,
+        me: {...action.data, nickname:'uhee'}
+      };
+    case "LOG_OUT_REQUEST":
       return {
         ...state,
         isLoggedIn: false,
