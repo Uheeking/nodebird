@@ -6,7 +6,7 @@ export const initialState = {
         id: 1,
         nickname: "유희왕",
       },
-      content: "첫 번째 게시글",
+      content: "첫 번째 게시글 #해시태그 #쇼미",
       Images: [
         {
           src: "https://bookthumb-phinf.pstatic.net/cover/137/995/13799585.jpg?udate=20180726",
@@ -46,7 +46,7 @@ const dummyPost = {
     content: '더미데이터입니다.',
     User: {
       id: 1,
-      nickname: '제로초',
+      nickname: '유희왕',
     },
     Images: [],
     Comments: [],
