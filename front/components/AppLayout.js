@@ -37,8 +37,8 @@ const AppLayout = ({ children }) => {
         <Menu.Item>
           <Input.Search enterButton style={{ verticalAlign: "middle" }} />
         </Menu.Item>
-        <Menu.Item key="mail">
-          <Input.Search enterButton style={{ verticalAlign: "middle" }} />
+        <Menu.Item>
+          <Link href="/signup"><a>회원가입</a></Link>
         </Menu.Item>
       </Menu>
       <Row gutter={8}>

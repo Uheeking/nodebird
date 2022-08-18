@@ -1,24 +1,48 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import Head from "next/head";
 import { Form, Input, Checkbox, Button } from "antd";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+import Router from "next/router";
+
 import AppLayout from "../components/AppLayout";
 import useInput from "../hooks/useInput";
 import { SIGN_UP_REQUEST } from "../reducers/user";
-import { useDispatch, useSelector } from "react-redux";
+
 const ErrorMessage = styled.div`
   color: red;
 `;
 
 const Signup = () => {
-  const dispatch =useDispatch();
-  const {signUpLoading} = useSelector((state)=> state.user)
+  const dispatch = useDispatch();
+  const { signUpLoading, signUpDone, signUpError, me } = useSelector(
+    (state) => state.user
+  );
+
+  useEffect(() => {
+    if (me && me.id) {
+      Router.replace("/");
+    }
+  }, [me && me.id]);
+
+  useEffect(() => {
+    if (signUpDone) {
+      Router.replace("/");
+    }
+  }, [signUpDone]);
+
+  useEffect(() => {
+    if (signUpError) {
+      alert(signUpError);
+    }
+  }, [signUpError]);
+
   const [email, onChangeEmail] = useInput("");
+  const [nickname, onChangeNickname] = useInput("");
   const [password, onChangePassword] = useInput("");
-  const [nickname, onChangeNick] = useInput("");
+
   const [passwordCheck, setPasswordCheck] = useState("");
   const [passwordError, setPasswordError] = useState(false);
-
   const onChangePasswordCheck = useCallback(
     (e) => {
       setPasswordCheck(e.target.value);
@@ -26,13 +50,14 @@ const Signup = () => {
     },
     [password]
   );
-// 약관 동의
+
   const [term, setTerm] = useState("");
   const [termError, setTermError] = useState(false);
   const onChangeTerm = useCallback((e) => {
     setTerm(e.target.checked);
     setTermError(false);
   }, []);
+
   const onSubmit = useCallback(() => {
     if (password !== passwordCheck) {
       return setPasswordError(true);
@@ -41,10 +66,10 @@ const Signup = () => {
       return setTermError(true);
     }
     console.log(email, nickname, password);
-    dispatchEvent({
+    dispatch({
       type: SIGN_UP_REQUEST,
-      data: {emai, password, nickname}
-    })
+      data: { email, password, nickname },
+    });
   }, [email, password, passwordCheck, term]);
 
   return (
@@ -56,7 +81,13 @@ const Signup = () => {
         <div>
           <label htmlFor="user-email">이메일</label>
           <br />
-          <Input name="user-email" value={email} required onChange={onChangeEmail} />
+          <Input
+            name="user-email"
+            type="email"
+            value={email}
+            required
+            onChange={onChangeEmail}
+          />
         </div>
         <div>
           <label htmlFor="user-nick">닉네임</label>
@@ -64,9 +95,8 @@ const Signup = () => {
           <Input
             name="user-nick"
             value={nickname}
-            type="email"
             required
-            onChange={onChangeNick}
+            onChange={onChangeNickname}
           />
         </div>
         <div>
@@ -96,7 +126,7 @@ const Signup = () => {
         </div>
         <div>
           <Checkbox name="user-term" checked={term} onChange={onChangeTerm}>
-            유희왕의 말을 잘 들을 것을 동의합니다.
+            유희왕 말을 잘 들을 것을 동의합니다.
           </Checkbox>
           {termError && <ErrorMessage>약관에 동의하셔야 합니다.</ErrorMessage>}
         </div>
@@ -109,4 +139,5 @@ const Signup = () => {
     </AppLayout>
   );
 };
+
 export default Signup;
