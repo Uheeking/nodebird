@@ -3,13 +3,49 @@ const { User, Post } = require("../models");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const passport = require("passport");
-const db = require("../models");
+const { isLoggedIn, isNotLoggedIn } = require("./middlewares");
 
-router.post("/login", (req, res, next) => {
+router.get("/", async (req, res, next) => {
+  // GET /user
+  try {
+    if (req.user) {
+      const fullUserWithoutPassword = await User.findOne({
+        where: { id: req.user.id },
+        attributes: {
+          exclude: ["password"],
+        },
+        include: [
+          {
+            model: Post,
+            attributes: ["id"],
+          },
+          {
+            model: User,
+            as: "Followings",
+            attributes: ["id"],
+          },
+          {
+            model: User,
+            as: "Followers",
+            attributes: ["id"],
+          },
+        ],
+      });
+      res.status(200).json(fullUserWithoutPassword);
+    } else {
+      res.status(200).json(null);
+    }
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+router.post("/login", isNotLoggedIn, (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       console.error(err);
-      next(err);
+      return next(err);
     }
     if (info) {
       return res.status(401).send(info.reason);
@@ -21,23 +57,32 @@ router.post("/login", (req, res, next) => {
       }
       const fullUserWithoutPassword = await User.findOne({
         where: { id: user.id },
-        attribute:{exclude:['password']},
-        include:[{
-          model: Post
-        },{
-          model: User,
-          as: 'Followings'
-        },{
-          model: User,
-          as: 'Followers'
-        }]
+        attributes: {
+          exclude: ["password"],
+        },
+        include: [
+          {
+            model: Post,
+            attributes: ["id"],
+          },
+          {
+            model: User,
+            as: "Followings",
+            attributes: ["id"],
+          },
+          {
+            model: User,
+            as: "Followers",
+            attributes: ["id"],
+          },
+        ],
       });
-      return res.json(user);
+      return res.status(200).json(fullUserWithoutPassword);
     });
   })(req, res, next);
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", isNotLoggedIn, async (req, res, next) => {
   // 숫자가 높을 수록 좋음
   console.log("comeon", req.body.email);
   try {
@@ -63,7 +108,7 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.post("/user/logout", (req, res, next) => {
+router.post("/logout", isLoggedIn, (req, res) => {
   req.logout();
   req.session.destroy();
   res.send("ok");
