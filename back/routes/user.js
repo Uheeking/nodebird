@@ -1,8 +1,9 @@
 const express = require("express");
-const { User } = require("../models");
+const { User, Post } = require("../models");
 const router = express.Router();
 const bcrypt = require("bcrypt");
 const passport = require("passport");
+const db = require("../models");
 
 router.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
@@ -18,6 +19,19 @@ router.post("/login", (req, res, next) => {
         console.error(loginErr);
         return next(loginErr);
       }
+      const fullUserWithoutPassword = await User.findOne({
+        where: { id: user.id },
+        attribute:{exclude:['password']},
+        include:[{
+          model: Post
+        },{
+          model: User,
+          as: 'Followings'
+        },{
+          model: User,
+          as: 'Followers'
+        }]
+      });
       return res.json(user);
     });
   })(req, res, next);
@@ -39,7 +53,7 @@ router.post("/", async (req, res, next) => {
     await User.create({
       email: req.body.email,
       nickname: req.body.nickname,
-      password: req.body.password,
+      password: hashedPassword,
     });
     // res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3060')
     res.status(200).send("ok");
@@ -47,6 +61,12 @@ router.post("/", async (req, res, next) => {
     console.error(error);
     next(error); // status 500 서버 쪽 에러
   }
+});
+
+router.post("/user/logout", (req, res, next) => {
+  req.logout();
+  req.session.destroy();
+  res.send("ok");
 });
 
 module.exports = router;
